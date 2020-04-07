@@ -2,8 +2,12 @@ package com.gridfs.springbootmongogridfs.service;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import com.mongodb.client.gridfs.model.GridFSFile;
 import lombok.RequiredArgsConstructor;
+import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,5 +34,13 @@ public class FileUploadService {
         //filenameyide gönderdik
         ObjectId id= gridFsTemplate.store(file.getInputStream(),file.getOriginalFilename(),dbObject);//kaydedilen dosyanın idsini dönderir
         System.out.println(id.toString());//idyi tetminale yazdırdık
+    }
+
+
+    //Gridfsdeki metadatayı apide döndük
+    public Document getFile(String id){
+        GridFSFile file = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(id)));//filemizi aldık mongodan
+        Document document= file.getMetadata();
+        return document;
     }
 }
